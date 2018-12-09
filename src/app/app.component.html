@@ -28,7 +28,7 @@
           <span *ngIf="!myForm.get('name').valid && myForm.get('name').touched" class="help-block form-error text-danger small"
             style="margin-left:150px;"> Template name is required.</span>
 
-          <div *if="" formArrayName="fields" style="margin:40px 5px 0 0;">
+          <div formArrayName="fields" style="margin:40px 5px 0 0;">
             <div style="margin-top:5px; margin-bottom:5px;" *ngFor="let field of myForm.get('fields').controls; let i=index">
               <fieldset>
                 <div [formGroupName]="i">
