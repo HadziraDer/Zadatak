@@ -1,0 +1,172 @@
+<head></head>
+
+<body>
+  <div class="container" style="margin-top:3%;">
+
+    <nav style="background-color:floralwhite;width:100%;margin:0 0 5px 0;">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" (click)="setActiveTab(1)">Administration</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="setActiveTab(2)">Formular</a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="col-md-12" style="margin-top:5%;">
+      <div [ngClass]="{'d-none': activeTab !== 1}">
+        <form [formGroup]="myForm">
+
+          <div class="form-inline">
+            <label for="name">Formular name: </label>
+            <input type="text" id="name" class="form-control" placeholder="Name" name="name" formControlName="name"
+              style="margin:0 50px 0 30px;width:300px;">
+            <button type="button" class="btn btn-default" (click)="search(myForm.get('name').value)" style="width:150px;">Search</button>
+          </div>
+          <span *ngIf="!myForm.get('name').valid && myForm.get('name').touched" class="help-block form-error text-danger small"
+            style="margin-left:150px;"> Template name is required.</span>
+
+          <div *if="" formArrayName="fields" style="margin:40px 5px 0 0;">
+            <div style="margin-top:5px; margin-bottom:5px;" *ngFor="let field of myForm.get('fields').controls; let i=index">
+              <fieldset>
+                <div [formGroupName]="i">
+                  <div class="form-inline">
+                    <div class="form-group">
+                      <h5>Element {{i+1}}:</h5>
+
+                      <input type="text" class="form-control" id="label" placeholder="Label" name="type"
+                        formControlName="label" style="margin:0 10px 0 10px;" required>
+
+
+                      <select formControlName="type" class="form-control" style="margin-right:10px;" (change)="checkType($event.target.value,field.controls.radioValues)">
+                        <option value='textbox'>textbox</option>
+                        <option value='checkbox'>checkbox</option>
+                        <option value='radio'>radio</option>
+                      </select>
+
+
+
+                      <select formControlName="validations" class="form-control" style="margin-right:10px;">
+                        <option value='none'>none</option>
+                        <option value='numeric'>numeric</option>
+                        <option value='mandatory'>mandatory</option>
+                      </select>
+
+                    </div>
+                    <button style="margin-left:5px;height:35px;" type="button" class="btn btn-danger btn-sm" (click)="deleteField(i)">
+                      Delete element</button>
+
+                  </div>
+                  <span style="margin-left: 130px;" class="help-block form-error text-danger small" *ngIf="field.controls.label.errors?.required &&
+                            field.controls.label.touched">Label
+                    is required. </span>
+                  <span style="margin-left: 100px;" class="help-block form-error text-danger small" *ngIf="field.controls.type.errors?.required &&
+                            field.controls.type.touched">Type
+                    is required. </span>
+                  <span style="margin-left: 15px;" class="help-block form-error text-danger small" *ngIf="field.controls.validations.errors?.required &&
+                            field.controls.validations.touched">Validation
+                    is required. </span>
+                  <div class="form-inline">
+                    <div class="form-group">
+                      <div formArrayName="radioValues">
+                        <div style="margin-top:5px; margin-bottom:5px;" *ngFor="let values of field.get('radioValues').controls; let j=index">
+                          <div [formGroupName]="j">
+                            <div class="form-group">
+                              <label style="margin-right:5px;" class="col-form-label" for="emailId">Radio value {{j +
+                                1}}</label>
+                              <input formControlName="value" class="form-control" style="margin-right:5px;" placeholder="Radio value"
+                                id="value" name="value" />
+                              <button style="margin-right:5px;" type="button" class="btn btn-danger btn-sm" (click)="deleteValue(field.controls.radioValues, j)">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true">Remove radio values</span>
+                              </button>
+                              <button style="margin-right:5px;" type="button" class="btn btn-danger btn-sm" (click)="addNewRadioValue(field.controls.radioValues)">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true">Add radio values</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </fieldset>
+            </div>
+            <button style="margin:5px; width:150px; margin-left: 46%" type="button" class="btn btn-info btn-sm" (click)="addNewField()">Add
+              element</button>
+
+            <button type="submit" class="btn btn-success mt-4" style="margin:5px; width:150px; margin-left: 46%"
+              (click)=onSubmit()>Submit</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <div [ngClass]="{'d-none': activeTab !== 2}">
+      <form [formGroup]="formularForm">
+
+        <div class="form-inline">
+          <label for="formularName">Formular name</label>
+          <select formControlName="name" class="form-control" (click)="changeTemplate($event.target.value)" id="formularName"
+            style="margin:0 15px; width: 250px">
+            <option></option>
+            <option *ngFor="let option of tempArray">{{option}}</option>
+          </select>
+
+          <label for="ver">Version</label>
+          <input type="number" formControlName="version" class="form-control" style="margin:0 15px;width:80px;" id="ver">
+
+          <button type="button" class="btn btn-default" (click)="renderFormular(this.formularForm.get('name').value,this.formularForm.get('version').value)"
+            style="width:150px">Load</button>
+        </div>
+
+        <div formArrayName="fields" style="margin:40px 5px 0 0;">
+          <div style="margin-top:5px; margin-bottom:5px;" *ngFor="let field of formularForm.get('fields').controls; let i=index">
+            <fieldset>
+              <div [formGroupName]="i">
+                <div class="form-inline">
+                  <div class="form-group">
+
+
+                    <label class="col-form-label" for="label" style="width: 150px;text-align:right;">{{
+                      field.controls.label.value }}</label>
+
+                    <!-- Input -->
+                    <input *ngIf="field.controls.type.value === 'textbox'" type="text" class="form-control" name="type"
+                      formControlName="value" style="margin:0 20px;width:200px;" required>
+
+                    <!-- Radio-->
+                    <div *ngIf="field.controls.type.value === 'radio'" style="margin:10px 0 0 20px;">
+                      <div *ngFor="let option of field.controls.radioValues.value; let j=index" class="form-inline">
+                        <input type="radio" formControlName="value" value='{{option.value}}'>
+                        <label>{{ option.value }}</label>
+                      </div>
+                    </div>
+
+                    <!--Checkbox -->
+                    <input *ngIf="field.controls.type.value === 'checkbox'" formControlName="value" type="checkbox"
+                      class="form-control" style="margin:0 20px;">
+                  </div>
+                  <div class="ml-2 danger" *ngIf="field.dirty && field.controls.value.value === '' && field.controls.validations.value === 'mandatory'">{{
+                    field.controls.label.value }} is required</div>
+                  <div class="ml-2 danger" *ngIf="field.dirty && isNumbericValue(field.controls.value.value) && field.controls.validations.value === 'numeric'">{{
+                    field.controls.label.value }} should be numeric value</div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success" (click)="submitFormular()" style="margin:5px; width:150px; margin-left: 50%">Submit</button>
+      </form>
+
+
+    </div>
+
+  </div>
+
+
+</body>
